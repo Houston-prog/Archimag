@@ -2,14 +2,19 @@
 
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RhController;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\DpaController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DetteController;
 use App\Http\Controllers\ShareController;
 use App\Http\Controllers\GroupeController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ArchivesController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HistoriqueController;
 use App\Http\Controllers\EmplacementController;
 use App\Http\Controllers\StatistiqueController;
 use App\Http\Controllers\TypeArchiveController;
@@ -50,12 +55,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/archives', [ArchivesController::class, 'view'])->name('archives.view');
     Route::post('/archives', [ArchivesController::class, 'store'])->name('archives.store');
-});
-
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dossierrh', [ArchivesController::class, 'createrh'])->name('dossierrh.createrh');
-    Route::post('/dossierrh', [ArchivesController::class, 'storerh'])->name('dossierrh.storerh');
-    Route::get('/dossierrh/view', [ArchivesController::class, 'viewdossiersrh'])->name('dossierrh.view');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -138,7 +137,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/journal', [JournalController::class, 'journalview'])->name('journal');
+    Route::get('/journal', [JournalController::class, 'index'])->name('journal');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -146,9 +145,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/journal/{id}', [JournalController::class, 'showbyid'])->name('journal.showbyid');
 });
 
-Route::get('/receivedoc', function () {
-    return Inertia::render('Consultation/ReceiveDoc');
-})->middleware(['auth', 'verified'])->name('receivedoc');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/historique', [HistoriqueController::class, 'index'])->name('historique.index');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/receivedoc', [ShareController::class, 'receiveview'])->name('receivedoc');
+    Route::get('/receivedoc/user', [ShareController::class, 'incomingDocsView'])->name('incoming');
+    Route::post('/share/{id}/approve', [ShareController::class, 'approve'])->name('share.approve');
+    Route::get('/share/{id}', [ShareController::class, 'showShare'])->name('share.show');
+    Route::delete('/share/{id}', [ShareController::class, 'destroy'])->name('share.destroy');
+});
 
 Route::get('/repertoires', function () {
     return Inertia::render('Consultation/Repertoires');
@@ -158,21 +165,68 @@ Route::get('/services', function () {
     return Inertia::render('ServicesArchives/Services');
 })->middleware(['auth', 'verified'])->name('services');
 
-Route::get('/historique', function () {
-    return Inertia::render('Consultation/Historique');
-})->middleware(['auth', 'verified'])->name('historique');
-
 Route::get('/securite', function () {
     return Inertia::render('Administration/Security');
 })->middleware(['auth', 'verified'])->name('securite');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/stat', [StatistiqueController::class, 'show'])->name('stat');
+    Route::get('/statistiques', [StatistiqueController::class, 'diskSpace'])->name('statistiques');
 });
 
 Route::get('/backup', function () {
     return Inertia::render('Administration/Backup');
 })->middleware(['auth', 'verified'])->name('backup');
 
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dpa', [DpaController::class, 'view'])->name('dpa.view');
+    Route::get('/dpa/entities/{type}', [DpaController::class, 'listEntities'])->name('dpa.entities');
+    Route::get('/dpa/details/{type}', [DpaController::class, 'details'])->name('dpa.details');
+    Route::get('/dpa/administration/details', [DpaController::class, 'details'])->defaults('type', 'administration')->name('administration.details');
+    Route::get('/dpa/epa/details', [DpaController::class, 'details'])->defaults('type', 'epa')->name('epa.details');
+    Route::get('/dpa/ctd/details', [DpaController::class, 'details'])->defaults('type', 'ctd')->name('ctd.details');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dette', [DetteController::class, 'view'])->name('dette.view');
+    Route::get('/dette/details/{type}', [DetteController::class, 'details'])->name('dette.details');
+    Route::get('/dette/details/{detteType}/{entityGroup}/{item}', [DetteController::class, 'entityDetails'])->name('dette.entity.details');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    // ... autres routes
+    Route::get('/passwords', [AdminController::class, 'passwordRequests'])->name('password.requests');
+    Route::get('/passwords/{user}/password', [AdminController::class, 'showPasswordForm'])->name('admin.password.edit');
+    Route::put('/passwords/{user}/password', [AdminController::class, 'updatePassword'])->name('admin.password.update');
+    Route::get('/securite/connections', [AdminController::class, 'suspiciousConnections'])->name('suspicious.connections');
+});
+
+// Route::middleware(['auth', 'verified'])->group(function () {
+//     Route::get('/dossierrh', [ArchivesController::class, 'createrh'])->name('dossierrh.createrh');
+//     Route::post('/dossierrh', [ArchivesController::class, 'storerh'])->name('dossierrh.storerh');
+//     Route::get('/dossierrh/view', [ArchivesController::class, 'viewdossiersrh'])->name('dossierrh.view');
+// });
+
+Route::middleware(['auth', 'verified'])->group(function() {
+    // 1. Les routes fixes (statiques) en premier
+    Route::get('/dossierrh', [DashboardController::class, 'index'])->name('dossierrh');
+    Route::get('/dossierrh/list', [DashboardController::class, 'listview'])->name('dossierrh.list'); // Déplacé ici
+    Route::get('/dossierrh/report/general', [DashboardController::class, 'downloadGeneralReport'])->name('dossierrh.downloadGeneralReport');
+    Route::get('/dossierrh/create', [RhController::class, 'create'])->name('dossierrh.create');
+    Route::post('/dossierrh/store', [RhController::class, 'store'])->name('dossierrh.store');
+    Route::get('/dossierrh/search', [DashboardController::class, 'search'])->name('dossierrh.search');
+
+    // 2. Les routes avec paramètres dynamiques ensuite
+    Route::get('/dossierrh/{rhusers}', [RhController::class, 'show'])->name('dossierrh.show');
+    Route::get('/dossierrh/{rhusers}/edit', [RhController::class, 'edit'])->name('dossierrh.edit'); // Ajout du préfixe /dossierrh/
+
+    // Simplification des routes de téléchargement et d'update
+    Route::get('/dossierrh/{rhusers}/download-all', [RhController::class, 'downloadFullDossier'])->name('dossierrh.download-all');
+    Route::get('/dossierrh/{rhusers}/download-piece/{pieceId}', [RhController::class, 'downloadPiece'])->name('dossierrh.download-piece');
+    Route::patch('/dossierrh/{rhusers}/update-info', [RhController::class, 'updateInfo'])->name('dossierrh.updateInfo');
+    Route::post('/dossierrh/{rhusers}/update-pieces', [RhController::class, 'updatePieces'])->name('dossierrh.updatePieces');
+    Route::post('/dossierrh/{rhusers}/upload/{pieceId}', [RhController::class, 'uploadPiece'])->name('dossierrh.upload-piece');
+
+});
 
 require __DIR__.'/auth.php';

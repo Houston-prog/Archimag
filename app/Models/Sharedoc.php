@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Sharedoc extends Model
 {
@@ -20,12 +21,23 @@ class Sharedoc extends Model
         'departement',
         'filepath',
         'share_with',
+        'status',
         'note',
         'user_id',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Obtenir l'utilisateur avec qui le document est partagé.
+     */
+    public function share_with(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'share_with');
+    }
+
+
 }

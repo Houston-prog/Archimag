@@ -187,122 +187,129 @@ export default function PublicResult({ results, searchParams }) {
     })
 
   return (
-    <AuthenticatedLayout hideHeader={true}>
-        <SidebarPub />
+    <AuthenticatedLayout>
+        <Head title='Search Results' />
 
-        <div className="py-8 md:pl-64 pl-4">
-            <div className="w-full px-4 sm:px-6 lg:px-8">
-                <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
-                    <div className="p-6 border-sky-200 creation-title font-bold">
+        <div className='flex flex-row justify-between'>
 
-                        <Head title='Search Results' />
-                        <div className='container mx-auto p-4'>
+            <div className='basis-1/4'>
+                <SidebarPub />
+            </div>
 
-                            { Object.keys(searchParams).length > 0 && (
-                                <div className='mb-4'>
-                                    <h1 className='text-xl font-semibold text-teal-400'>
-                                        Parametre de recherche
-                                    </h1>
-                                    <div className='flex flex-row py-2 mx-2 gap-4'>
-                                        { Object.entries(searchParams).map(([id, value]) => (
-                                            <div key={id} className='text-gray-400 basis-1/4'>
-                                                <Input className='mx-2' value={value} disabled/>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+            <div className="basis-3/4 mr-24 lg:mr-24 md:mr-24 sm:mr-10 py-6">
+                <div className="w-full px-4 sm:px-6 lg:px-8">
+                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
+                        <div className="p-6 border-sky-200 creation-title font-bold">
 
-                            <h1 className='text-2xl font-semibold mb-4'>
-                                R&eacute;sultat de la recherche
-                            </h1>
+                            <div className='container mx-auto p-4'>
 
-                            <div className='w-full p-4 space-y-4'>
-                                <div className="flex items-center justify-between">
-                                    <Input
-                                        type="text"
-                                        placeholder="Filter par objet..."
-                                        value={(table.getColumn('description')?.getFilterValue() || '')}
-                                        onChange={(e) => table.getColumn('description')?.setFilterValue(e.target.value)}
-                                        className="px-3 py-2 border border-gray-300 rounded-md max-w-sm"
-                                    />
-                                </div>
-                                <div className='rounded-md border overflow-hidden'>
-                                    <Table>
-                                        <TableHeader>
-                                            { table.getHeaderGroups().map((headerGroup) => (
-                                                <TableRow key={headerGroup.id}>
-                                                    { headerGroup.headers.map((header) => (
-                                                        <TableHead key={header.id}>
-                                                            {
-                                                                flexRender(
-                                                                    header.column.columnDef.header,
-                                                                    header.getContext()
-                                                                )
-                                                            }
-                                                        </TableHead>
-                                                    ))}
-                                                </TableRow>
+                                { Object.keys(searchParams).length > 0 && (
+                                    <div className='mb-4'>
+                                        <h1 className='text-xl font-semibold text-teal-400'>
+                                            Parametre de recherche
+                                        </h1>
+                                        <div className='flex flex-row py-2 mx-2 gap-4'>
+                                            { Object.entries(searchParams).map(([id, value]) => (
+                                                <div key={id} className='text-gray-400 basis-1/4'>
+                                                    <Input className='mx-2' value={value} disabled/>
+                                                </div>
                                             ))}
-                                        </TableHeader>
-                                        <TableBody>
-                                            { table.getRowModel().rows.length ? (
-                                                table.getRowModel().rows.map((row) => (
-                                                    <TableRow key={row.id} className='text-gray-600'>
-                                                        {
-                                                            row.getVisibleCells().map((cell) => (
-                                                                <TableCell key={cell.id}>
-                                                                    {
-                                                                        flexRender(
-                                                                            cell.column.columnDef.cell,
-                                                                            cell.getContext()
-                                                                        )
-                                                                    }
-                                                                </TableCell>
-                                                            ))
-                                                        }
+                                        </div>
+                                    </div>
+                                )}
+
+                                <h1 className='text-2xl font-semibold mb-4'>
+                                    R&eacute;sultat de la recherche
+                                </h1>
+
+                                <div className='w-full p-4 space-y-4'>
+                                    <div className="flex items-center justify-between">
+                                        <Input
+                                            type="text"
+                                            placeholder="Filter par objet..."
+                                            value={(table.getColumn('description')?.getFilterValue() || '')}
+                                            onChange={(e) => table.getColumn('description')?.setFilterValue(e.target.value)}
+                                            className="px-3 py-2 border border-gray-300 rounded-md max-w-sm"
+                                        />
+                                    </div>
+                                    <div className='rounded-md border overflow-hidden'>
+                                        <Table>
+                                            <TableHeader>
+                                                { table.getHeaderGroups().map((headerGroup) => (
+                                                    <TableRow key={headerGroup.id}>
+                                                        { headerGroup.headers.map((header) => (
+                                                            <TableHead key={header.id}>
+                                                                {
+                                                                    flexRender(
+                                                                        header.column.columnDef.header,
+                                                                        header.getContext()
+                                                                    )
+                                                                }
+                                                            </TableHead>
+                                                        ))}
                                                     </TableRow>
-                                                ))
-                                            ) : (
-                                                <TableRow>
-                                                    <TableCell colSpan={columns.length} className='h-24 text-center'>
-                                                        Aucun resultat.
-                                                    </TableCell>
-                                                </TableRow>
-                                            )}
-                                        </TableBody>
-                                    </Table>
-                                </div>
-
-                                <div className="flex items-center justify-between">
-                                    <div className="text-sm text-gray-600">
-                                        {table.getFilteredSelectedRowModel().rows.length} of{' '}
-                                        {table.getFilteredRowModel().rows.length} row(s) shown
+                                                ))}
+                                            </TableHeader>
+                                            <TableBody>
+                                                { table.getRowModel().rows.length ? (
+                                                    table.getRowModel().rows.map((row) => (
+                                                        <TableRow key={row.id} className='text-gray-600'>
+                                                            {
+                                                                row.getVisibleCells().map((cell) => (
+                                                                    <TableCell key={cell.id}>
+                                                                        {
+                                                                            flexRender(
+                                                                                cell.column.columnDef.cell,
+                                                                                cell.getContext()
+                                                                            )
+                                                                        }
+                                                                    </TableCell>
+                                                                ))
+                                                            }
+                                                        </TableRow>
+                                                    ))
+                                                ) : (
+                                                    <TableRow>
+                                                        <TableCell colSpan={columns.length} className='h-24 text-center'>
+                                                            Aucun resultat.
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )}
+                                            </TableBody>
+                                        </Table>
                                     </div>
-                                    <div className="flex gap-2">
-                                        <Button
-                                            onClick={() => table.previousPage()}
-                                            disabled={!table.getCanPreviousPage()}
-                                            className="px-3 py-1 border rounded disabled:opacity-50 bg-teal-400 disabled:cursor-not-allowed hover:bg-gray-50 hover:text-gray-600"
-                                        >
-                                            Pr&eacute;cedent
-                                        </Button>
-                                        <Button
-                                            onClick={() => table.nextPage()}
-                                            disabled={!table.getCanNextPage()}
-                                            className="px-3 py-1 border rounded disabled:opacity-50 bg-teal-400 disabled:cursor-not-allowed hover:bg-gray-50 hover:text-gray-600"
-                                        >
-                                            Suivant
-                                        </Button>
-                                    </div>
-                                </div>
 
+                                    <div className="flex items-center justify-between">
+                                        <div className="text-sm text-gray-600">
+                                            {table.getFilteredSelectedRowModel().rows.length} of{' '}
+                                            {table.getFilteredRowModel().rows.length} row(s) shown
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <Button
+                                                onClick={() => table.previousPage()}
+                                                disabled={!table.getCanPreviousPage()}
+                                                className="px-3 py-1 border rounded disabled:opacity-50 bg-teal-400 disabled:cursor-not-allowed hover:bg-gray-50 hover:text-gray-600"
+                                            >
+                                                Pr&eacute;cedent
+                                            </Button>
+                                            <Button
+                                                onClick={() => table.nextPage()}
+                                                disabled={!table.getCanNextPage()}
+                                                className="px-3 py-1 border rounded disabled:opacity-50 bg-teal-400 disabled:cursor-not-allowed hover:bg-gray-50 hover:text-gray-600"
+                                            >
+                                                Suivant
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </AuthenticatedLayout>
   )
 }

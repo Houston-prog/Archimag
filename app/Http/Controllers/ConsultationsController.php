@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Accessgroup;
-use App\Models\Docarchives;
-use App\Models\Sharedoc;
-use App\Models\Typedocs;
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Sharedoc;
+use App\Models\Typedocs;
+use App\Models\Accessgroup;
+use App\Models\Docarchives;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 
 class ConsultationsController extends Controller
 {
@@ -27,18 +28,18 @@ class ConsultationsController extends Controller
 
     public function search(Request $request): Response
     {
-
         $user = Auth::user();
+        $query = Docarchives::query();
 
-        // filter based on from fields
-        $query = Docarchives::query()
-                    ->where(function ($q) use ($request, $user) {
-                        if ($user->roles !== 'Super' && $user->id === $request->user()->id) {
-                            // User is not a Super admin
-                            $q->where('departement', '==', $user->departement);
-                        }
-                    })
-                    ->when($request->input('description'), fn($q, $description) => $q->where('description', 'like', '%' . $description . '%'))
+        if ($user->roles !== 'Super') {
+            $query->where('departement', $user->departement);
+        }
+
+        $query->when($request->input('description'), function ($q, $description) {
+            foreach (explode(' ', $description) as $term) {
+                $q->whereRaw('LOWER(description) LIKE ?', ['%' . Str::lower($term) . '%']);
+            }
+        })
                     ->when($request->input('typearchive'), fn($q, $typearchive) => $q->where('typearchive', 'like', '%' . $typearchive . '%'))
                     ->when($request->input('date_doc'), fn($q, $date_doc) => $q->where('date_doc', 'like', '%' . $date_doc . '%'))
                     ->when($request->input('created_at'), fn($q, $created_at) => $q->where('created_at', 'like', '%' . $created_at . '%'));
@@ -117,18 +118,18 @@ class ConsultationsController extends Controller
 
     public function searchmembers(Request $request): Response
     {
-
         $user = Auth::user();
+        $query = Docarchives::query();
 
-        // filter based on from fields
-        $query = Docarchives::query()
-                    ->where(function ($q) use ($request, $user) {
-                        if ($user->roles !== 'Super') {
-                            // User is not a Super admin
-                            $q->where('departement', '==', $user->departement);
-                        }
-                    })
-                    ->when($request->input('description'), fn($q, $description) => $q->where('description', 'like', '%' . $description . '%'))
+        if ($user->roles !== 'Super') {
+            $query->where('departement', $user->departement);
+        }
+
+        $query->when($request->input('description'), function ($q, $description) {
+            foreach (explode(' ', $description) as $term) {
+                $q->whereRaw('LOWER(description) LIKE ?', ['%' . Str::lower($term) . '%']);
+            }
+        })
                     ->when($request->input('typearchive'), fn($q, $typearchive) => $q->where('typearchive', 'like', '%' . $typearchive . '%'))
                     ->when($request->input('date_doc'), fn($q, $date_doc) => $q->where('date_doc', 'like', '%' . $date_doc . '%'))
                     ->when($request->input('users_name'), fn($q, $users_name) => $q->where('user_id', 'like', '%' . $users_name . '%'))
@@ -169,24 +170,23 @@ class ConsultationsController extends Controller
 
     public function searchallunit(Request $request): Response
     {
-
         $user = Auth::user();
+        $query = Docarchives::query();
 
-        // filter based on from fields
-        $query = Docarchives::query()
-                    ->where(function ($q) use ($user) {
-                        if ($user->roles !== 'Super') {
-                            // User is not a Super admin
-                            $q->where('departement', '==', $user->departement);
-                        }
-                    })
-                    ->when($request->input('description'), fn($q, $description) => $q->where('description', 'like', '%' . $description . '%'))
+        if ($user->roles !== 'Super') {
+            $query->where('departement', $user->departement);
+        }
+
+        $query->when($request->input('description'), function ($q, $description) {
+            foreach (explode(' ', $description) as $term) {
+                $q->whereRaw('LOWER(description) LIKE ?', ['%' . Str::lower($term) . '%']);
+            }
+        })
                     ->when($request->input('typearchive'), fn($q, $typearchive) => $q->where('typearchive', 'like', '%' . $typearchive . '%'))
                     ->when($request->input('date_doc'), fn($q, $date_doc) => $q->where('date_doc', 'like', '%' . $date_doc . '%'))
-                    ->when($request->input('created_at'), fn($q, $created_at) => $q->where('created_at', 'like', '%' . $created_at . '%'));
+                    ->when($request->input('departement'), fn($q, $departement) => $q->where('departement', 'like', '%' . $departement . '%'));
         // add more filter
-
-        $results = $query->paginate(25)->withQueryString();
+        $results = $query->get();
 
         return Inertia::render('Consultation/Restreintes/SearchAllUnit', [
             'results' => $results,
@@ -226,17 +226,16 @@ class ConsultationsController extends Controller
 
     public function searchgroup(Request $request): Response
     {
-        $departement = $request->input('departement');
-
+        $user = Auth::user();
         $query = Docarchives::query();
 
-        // filter based on from fields
-        if ($request->has('departement') && $departement) {
-            $query->where('departement', 'like', '%' . $departement . '%');
+        if ($user->roles !== 'Super') {
+            $query->where('departement', $user->departement);
         }
 
-        // add more filter
-        $results = $query->paginate(10);
+        $query->when($request->input('departement'), fn($q, $departement) => $q->where('departement', 'like', '%' . $departement . '%'));
+
+        $results = $query->get();
 
         return Inertia::render('Consultation/Restreintes/ArchivResult', [
             'results' => $results,
@@ -270,18 +269,14 @@ class ConsultationsController extends Controller
 
     public function searchtype(Request $request): Response
     {
-
         $user = Auth::user();
+        $query = Docarchives::query();
 
-        // filter based on from fields
-        $query = Docarchives::query()
-                    ->where(function ($q) use ($user) {
-                        if ($user->roles !== 'Super') {
-                            // User is not a Super admin
-                            $q->where('departement', '==', $user->departement);
-                        }
-                    })
-                    ->when($request->input('typearchive'), fn($q, $typearchive) => $q->where('typearchive', 'like', '%' . $typearchive . '%'));
+        if ($user->roles !== 'Super') {
+            $query->where('departement', $user->departement);
+        }
+
+        $query->when($request->input('typearchive'), fn($q, $typearchive) => $q->where('typearchive', 'like', '%' . $typearchive . '%'));
         // add more filter
 
         $results = $query->paginate(25)->withQueryString();

@@ -5,35 +5,37 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import React, { useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/Components/ui/card'
 import { Label } from '@/Components/ui/label';
+import { Link } from '@inertiajs/react';
+import { ArrowBigLeftDashIcon, BackpackIcon } from 'lucide-react';
 
-export default function ViewArchivById({ elements, paths  }) {
+export default function ViewArchivbyId({ elements, paths  }) {
+    const dateFormat = new Date(elements.created_at).toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
 
   return (
     <AuthenticatedLayout>
-        <div className="py-3">
-            <div className="mx-auto max-w-11xl sm:px-6 lg:px-8">
-                <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
-                    <div className="p-6 text-green-700 text-xl italic dark:text-green-600 text-center">
-                        Mieux se souvenir d'hier aujourd'hui, afin de mieux décider pour demain
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div className="flex flex-row gap-4">
-            <SidebarCons />
-        </div>
 
-        <div className="py-8 ml-60 basis-4/5">
-            <div className="mx-auto max-w-11xl sm:px-6 lg:px-88">
+        <SidebarCons />
+
+        <div className="py-8 md:pl-64 pl-4">
+            <div className="w-full px-4 sm:px-6 lg:px-8">
                 <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
                     <div className="p-6 border-sky-200 creation-title font-bold">
 
-                        <div className='mx-4 my-4'>
-                            <p className='text-blue-400 font-semibold'>
-                                Liste des documents
-                            </p>
-                        </div>
+                         <div className='flex flex-row gap-4'>
+                            <div className='basis-1/4'>
+                                <span className='text-blue-400 font-semibold'>
+                                    Liste des documents
+                                </span>
+                            </div>
+                            <div className='basis-3/4'>
+
+                            </div>
+                         </div>
 
                         <div class="py-5">
                             <div className='flex flex-row py-2 my-4 gap-4'>
@@ -88,9 +90,15 @@ export default function ViewArchivById({ elements, paths  }) {
                                     </div>
                                     <div className='py-1'>
                                         <Label className='py-4'>
+                                            Cote Définitive
+                                        </Label>
+                                        <Input value='' className='text-gray-600' disabled/>
+                                    </div>
+                                    <div className='py-1'>
+                                        <Label className='py-4'>
                                             Date de creation
                                         </Label>
-                                        <Input value={elements.created_at} className='text-gray-600' disabled/>
+                                        <Input value={dateFormat} className='text-gray-600' disabled/>
                                     </div>
                                 </div>
                                 <div className="basis-3/4 mx-8">

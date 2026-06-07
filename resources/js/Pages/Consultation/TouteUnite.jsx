@@ -21,7 +21,7 @@ export default function AllUnit({ types }) {
         typearchive: '',
         description: '',
         date_doc: '',
-        created_at: '',
+        departement: '',
     });
 
     const handleSearch = (e) => {
@@ -31,132 +31,134 @@ export default function AllUnit({ types }) {
     }
 
   return (
-    <AuthenticatedLayout  hideHeader={true}>
-        <div className="flex flex-row gap-4">
-            <SidebarCons />
-        </div>
+    <AuthenticatedLayout>
+        <div className="flex flex-row justify-between">
 
-        <div className="py-8 ml-60 basis-4/5">
-            <div className="mx-auto max-w-11xl sm:px-6 lg:px-88">
-                <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
-                    <div className="p-6 border-sky-200 creation-title font-bold">
+            <div className='basis-1/4'>
+                <SidebarCons />
+            </div>
 
-                        <div className="">
-                            <div className="mx-auto max-w-15xl sm:px-6 lg:px-8">
-                                <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
-                                    <div className="p-6 border-sky-200 creation-title font-bold">
-                                        Recherche des documents de toute l'unit&eacute;
+            <div className='basis-3/4 mr-10 py-6'>
+                <div className="py-8">
+                    <div className="max-w-7xl sm:px-6 lg:px-88">
+
+                        <div className="overflow-hidden bg-white sm:rounded-lg dark:bg-gray-100">
+
+                            <form onSubmit={handleSearch}>
+                                <div className="gap-4 m-8 border-sky-200 font-bold">
+                                    Par Type d'archives
+                                </div>
+
+                                <div className='mx-8 gap-2 text-gray-600'>
+                                    <div className="[--ring:var(--color-indigo-300)] *:not-first:mt-1 in-[.dark]:[--ring:var(--color-indigo-900)]">
+                                        <Select
+                                            // Use the `onValueChange` prop to update Inertia's form data
+                                            onValueChange={(value) => setData('typearchive', value)}
+                                            // Set the currently selected value based on the form data
+                                            value={data.typearchive}
+                                        >
+                                            <SelectTrigger id="typearchive">
+                                                {/* The SelectValue displays the currently selected item's text */}
+                                                <SelectValue placeholder="Selectionner le type d'archive..." />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {types.map((role) => (
+                                                    <SelectItem key={role.id} value={String(role.intitule)}>
+                                                        {role.intitule}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+
+                                    </div>
+                                </div>
+
+                                <div className="gap-4 m-8 border-sky-200 font-bold">
+                                    Multicrit&egrave;res
+                                </div>
+
+                                <div className="mx-8 py-2 w-90 text-gray-600">
+                                    <div className="inline-flex relative">
+                                        <InputLabel htmlFor="description" value="Objet de l'archive:"/>
                                     </div>
 
-                                    <form onSubmit={handleSearch}>
+                                    <Textarea
+                                        id="description"
+                                        type="text"
+                                        name="description"
+                                        value={data.description}
+                                        className="mt-1 block w-full"
+                                        autoComplete="description"
+                                        isFocused={true}
+                                        onChange={(e) => setData('description', e.target.value)}
+                                    />
+                                </div>
 
-                                        <div className='mx-8 gap-4 text-gray-600'>
-                                            <div className="[--ring:var(--color-indigo-300)] *:not-first:mt-2 in-[.dark]:[--ring:var(--color-indigo-900)]">
-                                                <Label htmlFor="typearchive">
-                                                    Type d'archives:
-                                                    <span className="text-red-500">
-                                                        &nbsp;*
-                                                    </span>
-                                                </Label>
+                                <div className='flex flex-row py-2 my-4 mx-8 gap-4'>
 
-                                                <Select
-                                                    // Use the `onValueChange` prop to update Inertia's form data
-                                                    onValueChange={(value) => setData('typearchive', value)}
-                                                    // Set the currently selected value based on the form data
-                                                    value={data.typearchive}
-                                                    >
-                                                    <SelectTrigger id="typearchive">
-                                                        {/* The SelectValue displays the currently selected item's text */}
-                                                        <SelectValue placeholder="Selectionner le type d'archive..." />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {types.map((role) => (
-                                                            <SelectItem key={role.id} value={String(role.intitule)}>
-                                                                {role.intitule}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-
-                                            </div>
-                                        </div>
-
-                                        <div className="mx-8 py-2 w-90 text-gray-600">
+                                    <div className='basis-1/2 text-gray-600'>
+                                        <div className="text-gray-600">
                                             <div className="inline-flex relative">
-                                                <InputLabel htmlFor="description" value="Objet de l'archive:"/>
+                                                <InputLabel htmlFor="date_doc" value="Date de signature:"/>
                                             </div>
 
-                                            <Textarea
-                                                id="description"
-                                                type="text"
-                                                name="description"
-                                                value={data.description}
+                                            <TextInput
+                                                id="date_doc"
+                                                type="date"
+                                                name="date_doc"
+                                                value={data.date_doc}
                                                 className="mt-1 block w-full"
-                                                autoComplete="description"
+                                                autoComplete="date_doc"
                                                 isFocused={true}
-                                                onChange={(e) => setData('description', e.target.value)}
+                                                placeholder="Objet de l'archive"
+                                                onChange={(e) => setData('date_doc', e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className='basis-1/2'>
+                                        <div className="text-gray-600">
+                                            <div className="inline-flex relative">
+                                                <InputLabel htmlFor="created_at" value="Producteur:"/>
+                                            </div>
+
+                                            <TextInput
+                                                id="created_at"
+                                                name="departement"
+                                                value={data.departement}
+                                                className="mt-1 block w-full"
+                                                placeholder='Producteur'
+                                                onChange={(e) => setData('departement', e.target.value)}
                                             />
                                         </div>
 
-                                        <div className='flex flex-row py-2 my-4 mx-8 gap-4'>
-
-                                            <div className='basis-1/2'>
-                                                <div className="text-gray-600">
-                                                    <div className="inline-flex relative">
-                                                        <InputLabel htmlFor="date_doc" value="Date de signature:"/>
-                                                    </div>
-
-                                                    <TextInput
-                                                        id="date_doc"
-                                                        type="text"
-                                                        name="date_doc"
-                                                        value={data.date_doc}
-                                                        className="mt-1 block w-full"
-                                                        autoComplete="date_doc"
-                                                        isFocused={true}
-                                                        onChange={(e) => setData('date_doc', e.target.value)}
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div className='basis-1/2'>
-                                                <div className="text-gray-600">
-                                                    <div className="inline-flex relative">
-                                                        <InputLabel htmlFor="created_at" value="Date de création:"/>
-                                                    </div>
-
-                                                    <TextInput
-                                                        id="created_at"
-                                                        name="created_at"
-                                                        value={data.created_at}
-                                                        className="mt-1 block w-full"
-                                                        onChange={(e) => setData('created_at', e.target.value)}
-                                                    />
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <div className="flex flex-row py-2 my-4 mx-8 gap-4">
-                                            <div className="basis-1/2">
-
-                                            </div>
-                                            <div className="basis-1/2 flex justify-end">
-                                                <SubmitButton>
-                                                    <Search size={20}/> &nbsp;&nbsp;Rechercher
-                                                </SubmitButton>
-                                            </div>
-                                        </div>
-                                    </form>
-
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
 
+                                <div className="flex flex-row py-2 my-4 mx-8 gap-4">
+                                    <div className="basis-1/2">
+
+                                    </div>
+                                    <div className="basis-1/2 flex justify-end gap-2">
+                                        <SubmitButton>
+                                            <Search size={20}/> &nbsp;&nbsp;Rechercher
+                                        </SubmitButton>
+                                        <Link
+                                            href={route('archives.view')}
+                                            className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150"
+                                        >
+                                            Voir plus
+                                        </Link>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </AuthenticatedLayout>
   )
 }

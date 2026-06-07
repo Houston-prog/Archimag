@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Typedocs;
+use App\Models\Docarchives;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StatistiqueController extends Controller
 {
@@ -107,5 +110,60 @@ class StatistiqueController extends Controller
       return Inertia::render('Administration/Statistiques', [
             'chartData' => $data
         ]);
+    }
+
+    public function diskSpace()
+    {
+        // Utilise le répertoire courant pour déterminer la partition.
+        // Sur Windows, vous pourriez vouloir utiliser 'C:'.
+        $directory = '.';
+
+        // Vérifie si les fonctions sont disponibles, car elles peuvent être désactivées sur certains hébergements.
+        if (!function_exists('disk_total_space') || !function_exists('disk_free_space')) {
+            $diskStats = [
+                ['name' => 'Erreur de lecture', 'value' => 1, 'fill' => 'hsl(var(--chart-5))']
+            ];
+            $totalSpace = 'N/A';
+            $usedSpace = 'N/A';
+            $freeSpace = 'N/A';
+        } else {
+            $total = disk_total_space($directory);
+            $free = disk_free_space($directory);
+            $used = $total - $free;
+
+            $diskStats = [
+                ['name' => 'Espace utilisé', 'value' => $used, 'fill' => 'hsl(var(--chart-2))'],
+                ['name' => 'Espace libre', 'value' => $free, 'fill' => 'hsl(var(--chart-1))'],
+            ];
+
+            $totalSpace = $this->formatBytes($total);
+            $usedSpace = $this->formatBytes($used);
+            $freeSpace = $this->formatBytes($free);
+        }
+
+        $totalDocarchives = Docarchives::count();
+        $totalTypedocs = Typedocs::count();
+        $totalDPA = Docarchives::where('typearchive', 'DPA')->count();
+        $totalDossierPersonnel = Docarchives::where('typearchive', 'DOSSIER DU PERSONNEL')->count();
+
+        return Inertia::render('Administration/Statistiques/Stats', [
+            'diskStats' => $diskStats,
+            'totalSpace' => $totalSpace,
+            'usedSpace' => $usedSpace,
+            'freeSpace' => $freeSpace,
+            'totalDocarchives' => $totalDocarchives,
+            'totalTypedocs' => $totalTypedocs,
+            'totalDPA' => $totalDPA,
+            'totalDossierPersonnel' => $totalDossierPersonnel,
+        ]);
+    }
+
+    private function formatBytes($bytes, $precision = 2) {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        $bytes /= (1 << (10 * $pow));
+        return round($bytes, $precision) . ' ' . $units[$pow];
     }
 }

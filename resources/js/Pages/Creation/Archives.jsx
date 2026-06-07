@@ -13,7 +13,8 @@ import {
     SkipForward,
     Edit3Icon,
     UserSquare2Icon,
-    CreditCardIcon
+    CreditCardIcon,
+    Notebook
 } from 'lucide-react'
 import {
   Select,
@@ -104,15 +105,15 @@ export default function TypeArchives({ types, groupes, locations }) {
     };
 
   return (
-    <AuthenticatedLayout hideHeader={true}>
+    <AuthenticatedLayout>
 
         <div className='flex flex-row gap-4'>
 
-            <div className="py-8 basis-0.5">
+            <div className="basis-1/4">
                 <Sidebar />
             </div>
 
-            <div className="py-8 ml-60 basis-4/5">
+            <div className="basis-3/4 mr-24 lg:mr-24 md:mr-24 sm:mr-10 py-6">
                 <div className="mx-auto max-w-11xl sm:px-6 lg:px-88">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
                         <div className="p-6 border-sky-200 creation-title font-bold">
@@ -130,6 +131,34 @@ export default function TypeArchives({ types, groupes, locations }) {
                                     )}
 
                                     <div className='mx-8 gap-4'>
+                                        <div className="[--ring:var(--color-indigo-300)] *:not-first:mt-2 in-[.dark]:[--ring:var(--color-indigo-900)]">
+                                            <Label htmlFor="format">
+                                                Format du document:
+                                                <span className="text-red-500">
+                                                    &nbsp;*
+                                                </span>
+                                            </Label>
+                                            <Select
+                                                defaultValue="Document PDF"
+                                                name="format"
+                                                // Use the `onValueChange` prop to update Inertia's form data
+                                                onValueChange={(value) => setData('format', value)}
+                                                // Set the currently selected value based on the form data
+                                                value={data.format}
+                                            >
+                                                <SelectTrigger id="format">
+                                                    <SelectValue placeholder="Format Document" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="Document PDF">Document PDF</SelectItem>
+                                                    <SelectItem value="Image">Image</SelectItem>
+                                                    <SelectItem value="Document Papier">Document Papier</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+
+                                    <div className='mx-8 py-2  gap-4'>
                                         <div className="[--ring:var(--color-indigo-300)] *:not-first:mt-2 in-[.dark]:[--ring:var(--color-indigo-900)]">
                                             <Label htmlFor="typearchive">
                                                 Type d'archives:
@@ -201,34 +230,6 @@ export default function TypeArchives({ types, groupes, locations }) {
                                         />
                                     </div>
 
-                                    <div className='mx-8 py-2 gap-4'>
-                                        <div className="[--ring:var(--color-indigo-300)] *:not-first:mt-2 in-[.dark]:[--ring:var(--color-indigo-900)]">
-                                            <Label htmlFor="format">
-                                                Format du document:
-                                                <span className="text-red-500">
-                                                    &nbsp;*
-                                                </span>
-                                            </Label>
-                                            <Select
-                                                defaultValue="Document PDF"
-                                                name="format"
-                                                // Use the `onValueChange` prop to update Inertia's form data
-                                                onValueChange={(value) => setData('format', value)}
-                                                // Set the currently selected value based on the form data
-                                                value={data.format}
-                                            >
-                                                <SelectTrigger id="format">
-                                                    <SelectValue placeholder="Format Document" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="Document PDF">Document PDF</SelectItem>
-                                                    <SelectItem value="Image">Image</SelectItem>
-                                                    <SelectItem value="Document Papier">Document Papier</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                    </div>
-
                                     { user?.roles !== 'User' && (
                                     <div className="flex flex-row py-2 mx-8 gap-4">
 
@@ -294,7 +295,7 @@ export default function TypeArchives({ types, groupes, locations }) {
 
                                     { user?.roles !== 'User' && (
                                     <div className="flex flex-row py-2 mx-8 gap-4">
-                                        <div className="basis-1/3">
+                                        <div className="basis-1/2">
                                             <div className="inline-flex relative">
                                                 <InputLabel htmlFor="rayon" value="Rayon:"/>
                                             </div>
@@ -310,7 +311,7 @@ export default function TypeArchives({ types, groupes, locations }) {
                                                 onChange={(e) => setData('rayon', e.target.value)}
                                             />
                                         </div>
-                                        <div className="basis-1/3">
+                                        <div className="basis-1/2">
                                             <div className="inline-flex relative">
                                                 <InputLabel htmlFor="travee" value="Travée:"/>
                                             </div>
@@ -326,24 +327,26 @@ export default function TypeArchives({ types, groupes, locations }) {
                                                 onChange={(e) => setData('travee', e.target.value)}
                                             />
                                         </div>
-                                        <div className="basis-1/3">
-                                            <div className="inline-flex relative">
-                                                <InputLabel htmlFor="cote" value="Cote de boite d'archives:"/>
-                                            </div>
-
-                                            <TextInput
-                                                id="cote"
-                                                type="text"
-                                                name="cote"
-                                                value={data.cote}
-                                                className="mt-1 block w-full"
-                                                autoComplete="cote"
-                                                isFocused={true}
-                                                onChange={(e) => setData('cote', e.target.value)}
-                                            />
-                                        </div>
                                     </div>
                                     )}
+
+                                    <div className="mx-8 py-2 gap-4">
+                                        <div className="inline-flex relative">
+                                            <InputLabel htmlFor="cote" value="Cote de boite d'archives:"/>
+                                        </div>
+
+                                        <TextInput
+                                            id="cote"
+                                            type="text"
+                                            name="cote"
+                                            value={data.cote}
+                                            className="mt-1 block w-full"
+                                            autoComplete="cote"
+                                            isFocused={true}
+                                            onChange={(e) => setData('cote', e.target.value)}
+                                            placeholder="Cote de boite d'archives"
+                                        />
+                                    </div>
 
                                     <div className='mx-8 py-2 gap-4'>
                                         <div className="[--ring:var(--color-indigo-300)] *:not-first:mt-2 in-[.dark]:[--ring:var(--color-indigo-900)]">
@@ -407,6 +410,10 @@ export default function TypeArchives({ types, groupes, locations }) {
                                         Étape 2/3: Importation du document
                                     </div>
 
+                                    <div className='py-4 mx-auto p-6'>
+                                        <Notebook className='w-5 h-5'/> { data.description }
+                                    </div>
+
                                     <div className='mx-8 py-4 gap-4'>
                                         <Label htmlFor="file">Importer le fichier (document)</Label>
                                         <Input
@@ -443,6 +450,10 @@ export default function TypeArchives({ types, groupes, locations }) {
                                         Étape 3/3: Validation des données
                                     </div>
 
+                                    <div className='py-4 mx-auto p-6'>
+                                        <Notebook className='w-5 h-5'/> { data.description }
+                                    </div>
+
                                     <div className='flex flex-row py-2 my-4 gap-4'>
                                         <div className="basis-1/4 mx-8">
                                             <strong>Type d'archive:</strong> { data.typearchive }
@@ -464,30 +475,23 @@ export default function TypeArchives({ types, groupes, locations }) {
                                             <strong>Groupe d'accès:</strong> { data.departement }
                                         </div>
                                         <div className="basis-3/4 mx-8">
-                                            <Card className="max-w-4xl mx-auto">
-                                                <CardHeader>
-                                                    { data.description }
-                                                </CardHeader>
-                                                <CardContent>
-                                                    <div className="aspect-[3/4] w-full border border-gray-300 rounded-lg overflow-hidden">
-                                                        {/* Use an iframe for native browser PDF preview.
-                                                        The 'type="application/pdf"' and 'height/width' attributes are important.
-                                                        */}
-                                                        <iframe
-                                                            src={data.filepath ? URL.createObjectURL(data.filepath) : ''}
-                                                            title="Aperçu du document PDF"
-                                                            width="100%"
-                                                            height="100%"
-                                                            type="application/pdf"
-                                                            className="w-full h-full"
-                                                            style={{ border: 'none' }}
-                                                        >
-                                                            {/* Fallback content for browsers that can't render the iframe */}
-                                                            <p>Your browser does not support PDF viewing. <a href={data.filepath} target="_blank" rel="noopener noreferrer">Download the PDF</a> instead.</p>
-                                                        </iframe>
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
+                                            <div className="aspect-[3/4] w-full border border-gray-300 rounded-lg overflow-hidden">
+                                                {/* Use an iframe for native browser PDF preview.
+                                                    The 'type="application/pdf"' and 'height/width' attributes are important.
+                                                */}
+                                                <iframe
+                                                    src={data.filepath ? URL.createObjectURL(data.filepath) : ''}
+                                                    title="Aperçu du document PDF"
+                                                    width="100%"
+                                                    height="100%"
+                                                    type="application/pdf"
+                                                    className="w-full h-full"
+                                                    style={{ border: 'none' }}
+                                                >
+                                                    {/* Fallback content for browsers that can't render the iframe */}
+                                                    <p>Your browser does not support PDF viewing. <a href={data.filepath} target="_blank" rel="noopener noreferrer">Download the PDF</a> instead.</p>
+                                                </iframe>
+                                            </div>
 
                                         </div>
                                     </div>

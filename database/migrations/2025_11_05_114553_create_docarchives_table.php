@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('docarchives', function (Blueprint $table) {
             $table->id();
             $table->string('typearchive');
-            $table->string('description');
+            $table->text('description');
             $table->string('date_doc');
             $table->string('emplacement')->nullable();
             $table->string('emplacement2')->nullable();

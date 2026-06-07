@@ -9,7 +9,7 @@ import DataTable from 'react-data-table-component';
 import styled from 'styled-components';
 import SidebarAdmin from './SidebarAdmin';
 import BreadcrumbSec from './BreadcrumbSec';
-import { FileWarningIcon } from 'lucide-react';
+import { AlertTriangleIcon, FileWarningIcon } from 'lucide-react';
 
 export default function Security() {
     const [filterText, setFilterText] = useState('');
@@ -173,28 +173,33 @@ export default function Security() {
   return (
     <AuthenticatedLayout hideHeader={true}>
 
-        <div className="flex flex-row gap-4">
-            <SidebarAdmin/>
-        </div>
+        <div className="flex flex-row justify-between">
 
-        <div className="py-8 md:pl-64 pl-4">
-            <div className="w-full px-4 sm:px-6 lg:px-8">
-                <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
-                    <div className="p-6 border-sky-200 creation-title font-bold">
-                        <BreadcrumbSec />
+            <div className='basis-1/4'>
+                <SidebarAdmin/>
+            </div>
 
-                        <div className='items-center justify-center'>
-                            <span className='text-center w-50 h-50 text-yellow-300'>
-                            ⚠️
-                            </span>
-                            <p className='text-center text-red-700'>
-                                Application est en maintenance
-                            </p>
+            <div className="basis-3/4 mr-24 lg:mr-24 md:mr-24 sm:mr-10 py-6">
+                <div className="w-full px-4 sm:px-6 lg:px-8">
+                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
+                        <div className="p-6 border-sky-200 creation-title font-bold">
+                            <BreadcrumbSec />
+
+                            <div className='items-center justify-center'>
+                                <span className='text-center w-50 h-50 text-yellow-300'>
+                                    <AlertTriangleIcon />
+
+                                    <p className='text-center text-red-700'>
+                                        Application est en maintenance
+                                    </p>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </AuthenticatedLayout>
   )
 }

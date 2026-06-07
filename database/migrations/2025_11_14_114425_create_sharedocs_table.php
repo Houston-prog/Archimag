@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -16,15 +16,16 @@ return new class extends Migration
             $table->string('typearchive');
             $table->string('description');
             $table->string('date_doc');
-            $table->string('emplacement');
-            $table->string('emplacement2');
-            $table->string('rayon');
-            $table->string('travee');
-            $table->string('cote');
+            $table->string('emplacement')->nullable();
+            $table->string('emplacement2')->nullable();
+            $table->string('rayon')->nullable();
+            $table->string('travee')->nullable();
+            $table->string('cote')->nullable();
             $table->string('format');
             $table->string('departement');
             $table->string('filepath')->nullable();
             $table->string('share_with');
+            $table->string('status')->default('Pending');
             $table->string('note')->nullable();
 
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');

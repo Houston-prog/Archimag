@@ -32,7 +32,7 @@ class PublicController extends Controller
                             $q->where('departement', 'PUBLIC');
                         }
                     })
-                    ->when($request->input('description'), fn($q, $description) => $q->where('description', 'like', '%' . $description . '%'))
+                    ->when($request->input('description'), fn($q, $description) => $q->whereRaw('LOWER(description) LIKE ?', ['%' . mb_strtolower($description) . '%']))
                     ->when($request->input('typearchive'), fn($q, $typearchive) => $q->where('typearchive', 'like', '%' . $typearchive . '%'))
                     ->when($request->input('date_doc'), fn($q, $date_doc) => $q->where('date_doc', 'like', '%' . $date_doc . '%'))
                     ->when($request->input('created_at'), fn($q, $created_at) => $q->where('created_at', 'like', '%' . $created_at . '%'));

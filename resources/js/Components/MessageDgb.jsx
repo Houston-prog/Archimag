@@ -4,14 +4,14 @@ export default function MessageDgb() {
   return (
     <div className='grid grid-cols-2 gap-4'>
         <div className=''>
-            <img src="images/photo_dgb.png" alt="" className="w-full mx-auto mb-4" />
+            <img src="images/photo_dgb.png" alt="" className="w-full mx-auto mb-4 rounded-lg" />
 
             <hr />
             <p className='text-center uppercase italic'>
                 Monsieur EDOU Alo'o Cyrill
             </p>
 
-            <p className='text-center'>
+            <p className='text-center font-semibold'>
                 Directeur Général du Budget
             </p>
         </div>

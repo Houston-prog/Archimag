@@ -17,6 +17,12 @@ import {
     UserRoundIcon,
     HardDriveDownloadIcon,
     NotebookIcon,
+    SearchCheck,
+    StickyNoteIcon,
+    FolderInput,
+    ShieldAlertIcon,
+    Fingerprint,
+    UserPlus2,
 } from 'lucide-react';
 import {
   Breadcrumb,
@@ -168,7 +174,24 @@ export default function AuthenticatedLayout({ children, hideHeader = false }) {
                                                     </span>
                                                 </DropdownMenuItem>
                                             </DropdownMenuGroup>
+
+                                            <DropdownMenuSeparator />
+                                            { user.roles !== 'Super' && user.roles !== 'Admin' ?
+                                                <span></span>
+                                                :
+                                                <DropdownMenuGroup>
+                                                    <DropdownMenuItem>
+                                                        <UserPlus2 size={16} className="opacity-60" aria-hidden="true" />
+                                                        <span>
+                                                            <BreadcrumbLink href={route('dossierrh.create')}>
+                                                                Nouveau Dossier RH
+                                                            </BreadcrumbLink>
+                                                        </span>
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuGroup>
+                                            }
                                         </DropdownMenuContent>
+
                                     </DropdownMenu>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator> / </BreadcrumbSeparator>
@@ -200,7 +223,7 @@ export default function AuthenticatedLayout({ children, hideHeader = false }) {
                                             <DropdownMenuSeparator />
                                             <DropdownMenuGroup>
                                                 <DropdownMenuItem>
-                                                    <ListTodo size={16} className="opacity-60" aria-hidden="true" />
+                                                    <FolderInput size={16} className="opacity-60" aria-hidden="true" />
                                                     <span>
                                                         <BreadcrumbLink href={route('touteunite')}>
                                                             Restreintes
@@ -211,9 +234,9 @@ export default function AuthenticatedLayout({ children, hideHeader = false }) {
                                             <DropdownMenuSeparator />
                                             <DropdownMenuGroup>
                                                 <DropdownMenuItem>
-                                                    <ListTodo size={16} className="opacity-60" aria-hidden="true" />
+                                                    <StickyNoteIcon size={16} className="opacity-60" aria-hidden="true" />
                                                     <span>
-                                                        <BreadcrumbLink href={route('historique')}>
+                                                        <BreadcrumbLink href={route('historique.index')}>
                                                             Historique
                                                         </BreadcrumbLink>
                                                     </span>
@@ -244,10 +267,25 @@ export default function AuthenticatedLayout({ children, hideHeader = false }) {
                                                     <span></span>
                                                     :
                                                     <DropdownMenuItem>
-                                                        <Settings2 size={16} className="opacity-60" aria-hidden="true" />
+                                                        <ShieldAlertIcon size={16} className="opacity-60" aria-hidden="true" />
                                                         <span>
-                                                            <BreadcrumbLink href={route('securite')}>
-                                                                Sécurité
+                                                            <BreadcrumbLink href={route('password.requests')}>
+                                                                Mot de passe oubli&eacute;
+                                                            </BreadcrumbLink>
+                                                        </span>
+                                                    </DropdownMenuItem>
+                                                }
+                                            </DropdownMenuGroup>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuGroup>
+                                                { user.roles !== 'Super' ?
+                                                    <span></span>
+                                                    :
+                                                    <DropdownMenuItem>
+                                                        <Fingerprint size={16} className="opacity-60" aria-hidden="true" />
+                                                        <span>
+                                                            <BreadcrumbLink href={route('suspicious.connections')}>
+                                                                Connexion suspecte
                                                             </BreadcrumbLink>
                                                         </span>
                                                     </DropdownMenuItem>
@@ -258,7 +296,7 @@ export default function AuthenticatedLayout({ children, hideHeader = false }) {
                                                 <DropdownMenuItem>
                                                     <ChartSplineIcon size={16} className="opacity-60" aria-hidden="true" />
                                                     <span>
-                                                        <BreadcrumbLink href={route('stat')}>
+                                                        <BreadcrumbLink href={route('statistiques')}>
                                                             Statistiques
                                                         </BreadcrumbLink>
                                                     </span>
@@ -331,16 +369,16 @@ export default function AuthenticatedLayout({ children, hideHeader = false }) {
                                         <DropdownMenuContent className="max-w-64">
                                             <DropdownMenuGroup>
                                                 <DropdownMenuItem>
-                                                    <NotebookIcon size={16} className="opacity-60" aria-hidden="true" />
+                                                    <SearchCheck size={16} className="opacity-60" aria-hidden="true" />
                                                     <span>
                                                         <BreadcrumbLink href={route('public')}>
-                                                            Constitution
+                                                            Recherche
                                                         </BreadcrumbLink>
                                                     </span>
                                                 </DropdownMenuItem>
                                             </DropdownMenuGroup>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuGroup>
+                                            {/* <DropdownMenuGroup>
                                                 <DropdownMenuItem>
                                                     <NotebookIcon size={16} className="opacity-60" aria-hidden="true" />
                                                     <span>
@@ -416,7 +454,7 @@ export default function AuthenticatedLayout({ children, hideHeader = false }) {
                                                     </span>
                                                 </DropdownMenuItem>
                                             </DropdownMenuGroup>
-                                            <DropdownMenuSeparator />
+                                            <DropdownMenuSeparator />*/}
                                             <DropdownMenuGroup>
                                                 <DropdownMenuItem>
                                                     <ListTodo size={16} className="opacity-60" aria-hidden="true" />

@@ -123,151 +123,154 @@ export default function ListAccount({ lists }) {
     })
 
   return (
-    <AuthenticatedLayout hideHeader={true}>
+    <AuthenticatedLayout>
 
-        <div className="flex flex-row gap-4">
-            <SidebarAdmin />
-        </div>
+        <div className="flex flex-row justify-between">
 
-        <div className="py-8 md:pl-64 pl-4">
-            <div className="w-full px-4 sm:px-6 lg:px-8">
-                <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
-                    <div className="p-6 border-sky-200 creation-title font-bold">
-                        <BreadcrumbAccount />
+            <div className='basis-1/4'>
+                <SidebarAdmin />
+            </div>
 
-                        <Head title='Accounts' />
-                        <div className='container mx-auto p-4'>
+            <div className="basis-3/4 mr-24 lg:mr-24 md:mr-24 sm:mr-10 py-6">
+                <div className="w-full px-4 sm:px-6 lg:px-8">
+                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
+                        <div className="p-6 border-sky-200 creation-title font-bold">
+                            <BreadcrumbAccount />
 
-                            <h1 className='text-2xl font-semibold mb-4'>
-                                Liste des utilisateurs
-                            </h1>
+                            <Head title='Accounts' />
+                            <div className='container mx-auto p-4'>
 
-                            <div className='p-4'>
-                                <div className='rounded-md border overflow-hidden'>
-                                    <Table>
-                                        <TableHeader>
-                                            { table.getHeaderGroups().map((headerGroup) => (
-                                                <TableRow key={headerGroup.id}>
-                                                    { headerGroup.headers.map((header) => (
-                                                        <TableHead key={header.id}>
-                                                            {
-                                                                flexRender(
-                                                                    header.column.columnDef.header,
-                                                                    header.getContext()
-                                                                )
-                                                            }
-                                                        </TableHead>
-                                                    ))}
-                                                </TableRow>
-                                            ))}
-                                        </TableHeader>
-                                        <TableBody>
-                                            { table.getRowModel().rows.length ? (
-                                                table.getRowModel().rows.map((row) => (
-                                                    <TableRow key={row.id} className='text-gray-600'>
-                                                        {
-                                                            row.getVisibleCells().map((cell) => (
-                                                                <TableCell key={cell.id}>
-                                                                    {
-                                                                        flexRender(
-                                                                            cell.column.columnDef.cell,
-                                                                            cell.getContext()
-                                                                        )
-                                                                    }
-                                                                </TableCell>
-                                                            ))
-                                                        }
+                                <h1 className='text-2xl font-semibold mb-4'>
+                                    Liste des utilisateurs
+                                </h1>
+
+                                <div className='p-4'>
+                                    <div className='rounded-md border overflow-hidden'>
+                                        <Table>
+                                            <TableHeader>
+                                                { table.getHeaderGroups().map((headerGroup) => (
+                                                    <TableRow key={headerGroup.id}>
+                                                        { headerGroup.headers.map((header) => (
+                                                            <TableHead key={header.id}>
+                                                                {
+                                                                    flexRender(
+                                                                        header.column.columnDef.header,
+                                                                        header.getContext()
+                                                                    )
+                                                                }
+                                                            </TableHead>
+                                                        ))}
                                                     </TableRow>
-                                                ))
-                                            ) : (
-                                                <TableRow>
-                                                    <TableCell colSpan={columns.length} className='h-24 text-center'>
-                                                        Aucun resultat.
-                                                    </TableCell>
-                                                </TableRow>
-                                            )}
-                                        </TableBody>
-                                    </Table>
-                                </div>
+                                                ))}
+                                            </TableHeader>
+                                            <TableBody>
+                                                { table.getRowModel().rows.length ? (
+                                                    table.getRowModel().rows.map((row) => (
+                                                        <TableRow key={row.id} className='text-gray-600'>
+                                                            {
+                                                                row.getVisibleCells().map((cell) => (
+                                                                    <TableCell key={cell.id}>
+                                                                        {
+                                                                            flexRender(
+                                                                                cell.column.columnDef.cell,
+                                                                                cell.getContext()
+                                                                            )
+                                                                        }
+                                                                    </TableCell>
+                                                                ))
+                                                            }
+                                                        </TableRow>
+                                                    ))
+                                                ) : (
+                                                    <TableRow>
+                                                        <TableCell colSpan={columns.length} className='h-24 text-center'>
+                                                            Aucun resultat.
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
 
-                                <div className='flex flex-row items-center justify-end space-x-2 py-4'>
-                                    <div className='basis-1/3 text-gray-600'>
-                                        {/* Results per page */}
-                                        <div className="">
-                                            <Select
-                                                value={table.getState().pagination.pageSize.toString()}
-                                                onValueChange={(value) => {
-                                                    table.setPageSize(Number(value))
-                                                }}
-                                                aria-label="Results par page"
-                                            >
-                                                <SelectTrigger
-                                                    id="results-per-page"
-                                                    className="w-fit whitespace-nowrap"
+                                    <div className='flex flex-row items-center justify-end space-x-2 py-4'>
+                                        <div className='basis-1/3 text-gray-600'>
+                                            {/* Results per page */}
+                                            <div className="">
+                                                <Select
+                                                    value={table.getState().pagination.pageSize.toString()}
+                                                    onValueChange={(value) => {
+                                                        table.setPageSize(Number(value))
+                                                    }}
+                                                    aria-label="Results par page"
                                                 >
-                                                    <SelectValue placeholder="Select number of results" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {[5, 10, 25, 50].map((pageSize) => (
-                                                        <SelectItem key={pageSize} value={pageSize.toString()}>
-                                                            {pageSize} / page
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                                    <SelectTrigger
+                                                        id="results-per-page"
+                                                        className="w-fit whitespace-nowrap"
+                                                    >
+                                                        <SelectValue placeholder="Select number of results" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {[5, 10, 25, 50].map((pageSize) => (
+                                                            <SelectItem key={pageSize} value={pageSize.toString()}>
+                                                                {pageSize} / page
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    {/* Page number information */}
-                                    <div className='basis-1/3'>
-                                        <div className="flex grow justify-end text-sm whitespace-nowrap text-muted-foreground">
-                                            <p
-                                                className="text-sm whitespace-nowrap text-muted-foreground"
-                                                aria-live="polite"
-                                            >
-                                                <span className="text-foreground">
-                                                    {table.getState().pagination.pageIndex *
-                                                        table.getState().pagination.pageSize +
-                                                        1}
-                                                    -
-                                                    {Math.min(
-                                                        Math.max(
-                                                        table.getState().pagination.pageIndex *
+                                        {/* Page number information */}
+                                        <div className='basis-1/3'>
+                                            <div className="flex grow justify-end text-sm whitespace-nowrap text-muted-foreground">
+                                                <p
+                                                    className="text-sm whitespace-nowrap text-muted-foreground"
+                                                    aria-live="polite"
+                                                >
+                                                    <span className="text-foreground">
+                                                        {table.getState().pagination.pageIndex *
                                                             table.getState().pagination.pageSize +
-                                                            table.getState().pagination.pageSize,
-                                                        0
-                                                        ),
-                                                        table.getRowCount()
-                                                    )}
-                                                </span>
-                                                {" "} sur {" "}
-                                                <span className="text-foreground">
-                                                    {table.getRowCount().toString()}
-                                                </span>
-                                            </p>
+                                                            1}
+                                                        -
+                                                        {Math.min(
+                                                            Math.max(
+                                                            table.getState().pagination.pageIndex *
+                                                                table.getState().pagination.pageSize +
+                                                                table.getState().pagination.pageSize,
+                                                            0
+                                                            ),
+                                                            table.getRowCount()
+                                                        )}
+                                                    </span>
+                                                    {" "} sur {" "}
+                                                    <span className="text-foreground">
+                                                        {table.getRowCount().toString()}
+                                                    </span>
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className='basis-1/3 flex flex-1 justify-end space-x-4 text-gray-300'>
-                                        <div className="flex items-center justify-end space-x-2 py-4 text-gray-800">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => table.previousPage()}
-                                                disabled={!table.getCanPreviousPage()}
-                                            >
-                                                <ChevronFirstIcon size={15} />
-                                                Précedent
-                                            </Button>
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => table.nextPage()}
-                                                disabled={!table.getCanNextPage()}
-                                            >
-                                                Suivant
-                                                <ChevronLastIcon size={15} />
-                                            </Button>
+                                        <div className='basis-1/3 flex flex-1 justify-end space-x-4 text-gray-300'>
+                                            <div className="flex items-center justify-end space-x-2 py-4 text-gray-800">
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => table.previousPage()}
+                                                    disabled={!table.getCanPreviousPage()}
+                                                >
+                                                    <ChevronFirstIcon size={15} />
+                                                    Précedent
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => table.nextPage()}
+                                                    disabled={!table.getCanNextPage()}
+                                                >
+                                                    Suivant
+                                                    <ChevronLastIcon size={15} />
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -277,6 +280,7 @@ export default function ListAccount({ lists }) {
                 </div>
             </div>
         </div>
+
     </AuthenticatedLayout>
   )
 }

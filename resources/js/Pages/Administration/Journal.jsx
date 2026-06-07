@@ -1,152 +1,224 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import React, { useMemo, useState } from 'react'
+import React from 'react'
 import SidebarAdmin from './SidebarAdmin';
-import { useForm } from '@inertiajs/react'
-import { Label } from '@/Components/ui/label';
+import { useForm, Head, router } from '@inertiajs/react'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import SubmitButton from '@/Components/SubmitBtn';
-import InputLabel from '@/Components/InputLabel';
-import Textarea from '@/Components/Textarea';
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import TextInput from '@/Components/TextInput';
-import { Search } from 'lucide-react';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import {
+    flexRender,
+    getCoreRowModel,
+    useReactTable,
+    getPaginationRowModel,
+} from "@tanstack/react-table";
+import { ChevronFirstIcon, ChevronLastIcon } from 'lucide-react';
 
-export default function Journal({ types }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        typearchive: '',
-        description: '',
-        date_doc: '',
-        created_at: '',
+export default function Journal({ logs, users = [], filters = {} }) {
+    const { data, setData, get } = useForm({
+        user_id: filters.user_id || '',
+        action: filters.action || '',
+        date_from: filters.date_from || '',
+        date_to: filters.date_to || '',
     });
 
     const handleSearch = (e) => {
         e.preventDefault();
-
-        post(route('journal.show'));
+        get(route('journal'), {
+            preserveState: true,
+            preserveScroll: true,
+        });
     }
 
+    const columns = React.useMemo(() => [
+        {
+            accessorKey: 'user.name',
+            header: 'Utilisateur',
+            cell: ({ row }) => row.original.user?.name || 'Système'
+        },
+        {
+            accessorKey: 'action',
+            header: 'Action',
+        },
+        {
+            accessorKey: 'description',
+            header: 'Description',
+            cell: ({ row }) => {
+                const item = row.original;
+                const description = item.description ? item.description.replace(/_/g, ' ') : '';
+
+                if (item.filepath && item.format === 'Document PDF') {
+                    return (
+                        <span className='text-blue-500 hover:text-blue-700 hover:underline whitespace-normal'>
+                            {description}
+                        </span>
+                    );
+                }
+                return <div className="whitespace-normal">{description}</div>;
+            },
+        },
+        {
+            accessorKey: 'created_at',
+            header: 'Date',
+            cell: ({ row }) => {
+                return new Date(row.original.created_at).toLocaleString('fr-FR');
+            }
+        },
+    ], []);
+
+    const table = useReactTable({
+        data: logs?.data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        pageCount: logs.last_page,
+        state: {
+            pagination: {
+                pageIndex: logs.current_page - 1,
+                pageSize: logs.per_page
+            },
+        },
+        manualPagination: true
+    })
+
   return (
-    <AuthenticatedLayout hideHeader={true}>
+    <AuthenticatedLayout>
+        <Head title="Journal d'activité" />
+        <div className="flex flex-row justify-between">
 
-        <div className="flex flex-row gap-4">
-            <SidebarAdmin/>
-        </div>
+            <div className='basis-1/4'>
+                <SidebarAdmin/>
+            </div>
 
-        <div className="py-8 md:pl-64 pl-4">
-            <div className="w-full px-4 sm:px-6 lg:px-8">
-                <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
-                    <div className="p-6 border-sky-200 creation-title font-bold">
-                        <h2>
-                            Paramétrage du journal
-                        </h2>
+            <div className="basis-3/4 mr-24 lg:mr-24 md:mr-24 sm:mr-10 py-6">
+                <div className="w-full px-4 sm:px-6 lg:px-8">
+                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
+                        <div className="p-6 border-sky-200">
+                            <h2 className='text-2xl font-bold mb-4'>
+                                Journal d'activité des utilisateurs
+                            </h2>
 
-                        <form onSubmit={handleSearch}>
-
-                            <div className='mx-8 gap-4 text-gray-600'>
-                                <div className="[--ring:var(--color-indigo-300)] *:not-first:mt-2 in-[.dark]:[--ring:var(--color-indigo-900)]">
-                                    <Label htmlFor="typearchive">
-                                        Type d'archives:
-                                    </Label>
-
-                                    <Select
-                                        // Use the `onValueChange` prop to update Inertia's form data
-                                        onValueChange={(value) => setData('typearchive', value)}
-                                        // Set the currently selected value based on the form data
-                                        value={data.typearchive}
-                                    >
-                                        <SelectTrigger id="typearchive">
-                                            {/* The SelectValue displays the currently selected item's text */}
-                                            <SelectValue placeholder="Selectionner le type d'archive..." />
+                            <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end mb-6 p-4 border rounded-lg bg-gray-50">
+                                <div>
+                                    <label htmlFor="user_id" className="block text-sm font-medium text-gray-700 mb-1">Utilisateur</label>
+                                    <Select onValueChange={(value) => setData('user_id', value)} value={data.user_id || "all"}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Tous les utilisateurs" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {types.map((role) => (
-                                                <SelectItem key={role.id} value={String(role.intitule)}>
-                                                    {role.intitule}
-                                                </SelectItem>
+                                            <SelectItem value="all">Tous les utilisateurs</SelectItem>
+                                            {users.map(user => (
+                                                <SelectItem key={user.id} value={user.id.toString()}>{user.name}</SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-
                                 </div>
+                                <div>
+                                    <label htmlFor="action" className="block text-sm font-medium text-gray-700 mb-1">Action</label>
+                                    <TextInput
+                                        id="action"
+                                        className="w-full"
+                                        value={data.action}
+                                        onChange={(e) => setData('action', e.target.value)}
+                                        placeholder="ex: création, suppression..."
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="date_from" className="block text-sm font-medium text-gray-700 mb-1">Date de début</label>
+                                    <TextInput
+                                        id="date_from"
+                                        type="date"
+                                        className="w-full"
+                                        value={data.date_from}
+                                        onChange={(e) => setData('date_from', e.target.value)}
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="date_to" className="block text-sm font-medium text-gray-700 mb-1">Date de fin</label>
+                                    <TextInput
+                                        id="date_to"
+                                        type="date"
+                                        className="w-full"
+                                        value={data.date_to}
+                                        onChange={(e) => setData('date_to', e.target.value)}
+                                    />
+                                </div>
+                                <Button type="submit">Rechercher</Button>
+                            </form>
+
+                            <div className='rounded-md border overflow-hidden'>
+                                <Table>
+                                    <TableHeader>
+                                        { table.getHeaderGroups().map((headerGroup) => (
+                                            <TableRow key={headerGroup.id}>
+                                                { headerGroup.headers.map((header) => (
+                                                    <TableHead key={header.id} className="font-bold">
+                                                        { flexRender( header.column.columnDef.header, header.getContext() ) }
+                                                    </TableHead>
+                                                ))}
+                                            </TableRow>
+                                        ))}
+                                    </TableHeader>
+                                    <TableBody>
+                                        { table.getRowModel().rows.length ? (
+                                            table.getRowModel().rows.map((row) => (
+                                                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"} className='text-gray-600'>
+                                                    { row.getVisibleCells().map((cell) => (
+                                                        <TableCell key={cell.id}>
+                                                            { flexRender( cell.column.columnDef.cell, cell.getContext() ) }
+                                                        </TableCell>
+                                                    ))}
+                                                </TableRow>
+                                            ))
+                                        ) : (
+                                            <TableRow>
+                                                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                                                    Aucun résultat.
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
                             </div>
-
-                            <div className="mx-8 py-2 w-90 text-gray-600">
-                                <div className="inline-flex relative">
-                                    <InputLabel htmlFor="description" value="Objet de l'archive:"/>
-                                </div>
-
-                                <Textarea
-                                    id="description"
-                                    type="text"
-                                    name="description"
-                                    value={data.description}
-                                    className="mt-1 block w-full"
-                                    autoComplete="description"
-                                    isFocused={true}
-                                    onChange={(e) => setData('description', e.target.value)}
-                                />
+                            <div className='flex items-center justify-end space-x-2 py-4'>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => router.get(logs.prev_page_url, {}, { preserveState: true, preserveScroll: true })}
+                                    disabled={!logs.prev_page_url}
+                                >
+                                    <ChevronFirstIcon size={15} />
+                                    Précédent
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => router.get(logs.next_page_url, {}, { preserveState: true, preserveScroll: true })}
+                                    disabled={!logs.next_page_url}
+                                >
+                                    Suivant
+                                    <ChevronLastIcon size={15} />
+                                </Button>
                             </div>
-
-                            <div className='flex flex-row py-2 my-4 mx-8 gap-4'>
-
-                                 <div className='basis-1/2'>
-                                    <div className="text-gray-600">
-                                        <div className="inline-flex relative">
-                                            <InputLabel htmlFor="date_doc" value="Date de signature:"/>
-                                        </div>
-
-                                        <TextInput
-                                            id="date_doc"
-                                            type="text"
-                                            name="date_doc"
-                                            value={data.date_doc}
-                                            className="mt-1 block w-full"
-                                            autoComplete="date_doc"
-                                            isFocused={true}
-                                            onChange={(e) => setData('date_doc', e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className='basis-1/2'>
-                                    <div className="text-gray-600">
-                                        <div className="inline-flex relative">
-                                            <InputLabel htmlFor="created_at" value="Date de création:"/>
-                                        </div>
-
-                                        <TextInput
-                                            id="created_at"
-                                            name="created_at"
-                                            value={data.created_at}
-                                            className="mt-1 block w-full"
-                                            onChange={(e) => setData('created_at', e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div className="flex flex-row py-2 my-4 mx-8 gap-4">
-                                <div className="basis-1/2">
-
-                                </div>
-                                <div className="basis-1/2 flex justify-end">
-                                    <SubmitButton>
-                                        <Search size={20}/> &nbsp;&nbsp;Rechercher
-                                    </SubmitButton>
-                                </div>
-                             </div>
-                        </form>
-
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </AuthenticatedLayout>
   )
 }

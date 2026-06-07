@@ -6,7 +6,7 @@ export default function SidebarRep() {
   return (
     <div className='overflow-hidden flex items-center justify-center basis-32'>
         <div className="flex flex-col flex-auto flex-shrink-0 antialiased bg-gray-50 text-gray-800">
-            <div className="fixed flex flex-col top-30 left-0 w-64 bg-green-200 h-full border-r">
+            <div className="fixed flex flex-col top-30 left-0 w-80 bg-green-200 h-full border-r">
                 <div className="flex items-center justify-center h-14 border-b border-blue-300">
                     <div className="uppercase text-sm text-center">
                         Repertoires

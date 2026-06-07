@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Accessgroup;
-use App\Models\Archives;
-use App\Models\Docarchives;
-use App\Models\Dossiersrh;
-use App\Models\Locationemp;
-use App\Models\Typedocs;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Archives;
+use App\Models\Typedocs;
+use App\Models\Dossiersrh;
+use App\Models\Accessgroup;
+use App\Models\Docarchives;
+use App\Models\Locationemp;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 
 class ArchivesController extends Controller
 {
@@ -22,7 +22,7 @@ class ArchivesController extends Controller
         $rules = [
             'typearchive'=> 'required|string|max:255',
             'date_doc' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
+            'description' => 'required|string',
             'format' => 'required|string|max:255',
             'emplacement' => 'required|string|max:255',
             'emplacement2' => 'required|string|max:255',
@@ -143,7 +143,7 @@ class ArchivesController extends Controller
 
     public function viewdossiersrh (): Response
     {
-        $dossiers = Dossiersrh::all();
+        $dossiers = Docarchives::where('typearchive','=','DOSSIER DU PERSONNEL')->get();
 
         return Inertia::render('Consultation/Dossierrh/DossierRh', [
             'dossiers' => $dossiers,

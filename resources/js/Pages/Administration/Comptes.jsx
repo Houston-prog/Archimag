@@ -11,23 +11,27 @@ import BreadcrumbAccount from './BreadcrumbAccount';
 export default function Comptes() {
 
   return (
-    <AuthenticatedLayout hideHeader={true}>
+    <AuthenticatedLayout>
 
-        <div className="flex flex-row gap-4">
-            <SidebarAdmin/>
-        </div>
+        <div className="flex flex-row justify-between">
 
-        <div className="py-8 md:pl-64 pl-4">
-            <div className="w-full px-4 sm:px-6 lg:px-8">
-                <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
-                    <div className="p-6 border-sky-200 creation-title font-bold">
-                        <BreadcrumbAccount />
+            <div className='basis-1/4'>
+                <SidebarAdmin/>
+            </div>
 
-                        <Register />
+            <div className="basis-3/4 mr-24 lg:mr-24 md:mr-24 sm:mr-10 py-6">
+                <div className="w-full px-4 sm:px-6 lg:px-8">
+                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-100">
+                        <div className="p-6 border-sky-200 creation-title font-bold">
+                            <BreadcrumbAccount />
+
+                            <Register />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </AuthenticatedLayout>
   )
 }
